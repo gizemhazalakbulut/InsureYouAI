@@ -1,4 +1,6 @@
 using InsureYouAI.Context;
+using InsureYouAI.Entities;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -6,7 +8,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 
-builder.Services.AddDbContext<InsureContext>(); 
+builder.Services.AddDbContext<InsureContext>();
+
+builder.Services.AddIdentity<AppUser, IdentityRole>()
+    .AddEntityFrameworkStores<InsureContext>()
+    .AddDefaultTokenProviders();
 
 var app = builder.Build();
 

@@ -1,6 +1,8 @@
 ﻿using InsureYouAI.Context;
 using InsureYouAI.Entities;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
+using System.Text;
 
 namespace InsureYouAI.Controllers
 {
@@ -58,6 +60,48 @@ namespace InsureYouAI.Controllers
             _context.AboutItems.Remove(value);
             _context.SaveChanges();
             return RedirectToAction("AboutItemList");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> CreateAboutItemWithGoogleGemini()
+        {
+            var apiKey = "";
+            var model = "gemini-2.5-flash";
+            var url = $"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={apiKey}";
+            var requestBody = new
+            {
+                contents = new[]
+                {
+                    new
+                    {
+                        parts=new[]
+                        {
+                            new
+                            {
+                                text="Kurumsal bir sigorta firması için etkileyici, güven verici ve profesyonel bir 'Hakkımızda alanları (about item)' yazısı oluştur. Örneğin: 'Geleceğinizi güvence altına alan kapsamlı sigorta çözümleri sunuyoruz.' şeklinde veya bunun gibi ve buna benzer daha zengin içerikler gelsin. En az 10 tane item istiyorum."
+                            }
+                        }
+                    }
+                }
+            };
+
+            var content = new StringContent(JsonSerializer.Serialize(requestBody), Encoding.UTF8, "application/json");
+
+            using var httpClient = new HttpClient();
+            var response = await httpClient.PostAsync(url, content);
+            var responseJson = await response.Content.ReadAsStringAsync();
+
+            using var jsonDoc = JsonDocument.Parse(responseJson);
+            var aboutText = jsonDoc.RootElement
+                                 .GetProperty("candidates")[0]
+                                 .GetProperty("content")
+                                 .GetProperty("parts")[0]
+                                 .GetProperty("text")
+                                 .GetString();
+
+            ViewBag.value = aboutText;
+
+            return View();
         }
 
     }

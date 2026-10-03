@@ -4,6 +4,7 @@ using InsureYouAI.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InsureYouAI.Migrations
 {
     [DbContext(typeof(InsureContext))]
-    partial class InsureContextModelSnapshot : ModelSnapshot
+    [Migration("20261003184834_mig2")]
+    partial class mig2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -197,40 +200,6 @@ namespace InsureYouAI.Migrations
                     b.HasKey("CategoryId");
 
                     b.ToTable("Categories");
-                });
-
-            modelBuilder.Entity("InsureYouAI.Entities.Comment", b =>
-                {
-                    b.Property<int>("CommentId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CommentId"));
-
-                    b.Property<string>("AppUserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("ArticleId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CommentDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CommentDetail")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CommentStatus")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("CommentId");
-
-                    b.HasIndex("AppUserId");
-
-                    b.HasIndex("ArticleId");
-
-                    b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("InsureYouAI.Entities.Contact", b =>
@@ -594,25 +563,6 @@ namespace InsureYouAI.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("InsureYouAI.Entities.Comment", b =>
-                {
-                    b.HasOne("InsureYouAI.Entities.AppUser", "AppUser")
-                        .WithMany("Comments")
-                        .HasForeignKey("AppUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("InsureYouAI.Entities.Article", "Article")
-                        .WithMany("Comments")
-                        .HasForeignKey("ArticleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("AppUser");
-
-                    b.Navigation("Article");
-                });
-
             modelBuilder.Entity("InsureYouAI.Entities.PricingPlanItem", b =>
                 {
                     b.HasOne("InsureYouAI.Entities.PricingPlan", "PricingPlan")
@@ -673,16 +623,6 @@ namespace InsureYouAI.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("InsureYouAI.Entities.AppUser", b =>
-                {
-                    b.Navigation("Comments");
-                });
-
-            modelBuilder.Entity("InsureYouAI.Entities.Article", b =>
-                {
-                    b.Navigation("Comments");
                 });
 
             modelBuilder.Entity("InsureYouAI.Entities.Category", b =>
